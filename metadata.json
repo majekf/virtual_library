@@ -1,0 +1,5 @@
+{
+  "name": "Virtual 3D Cozy Library",
+  "description": "An interactive 3D virtual library where you can walk around a cozy room and manage a personal collection of books. Add books with custom or AI-generated covers, rearrange them on shelves, and immerse yourself in your digital collection.",
+  "requestFramePermissions": []
+}
