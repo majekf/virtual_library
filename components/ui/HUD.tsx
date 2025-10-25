@@ -1,6 +1,6 @@
 
 import React, { useRef } from 'react';
-import { useLibraryActions } from '../../hooks/useLibraryStore';
+import { useLibraryStore } from '../../hooks/useLibraryStore';
 import { PlusIcon, BookOpenIcon, ChevronsLeftRightIcon, DownloadIcon, UploadIcon } from './Icons';
 
 const HUDButton: React.FC<{ onClick: () => void; children: React.ReactNode; tooltip: string }> = ({ onClick, children, tooltip }) => (
@@ -17,7 +17,10 @@ const HUDButton: React.FC<{ onClick: () => void; children: React.ReactNode; tool
 
 
 export default function HUD() {
-  const { toggleAddBookModal, addBookcase, exportLibrary, importLibrary } = useLibraryActions();
+  const toggleAddBookModal = useLibraryStore((state) => state.toggleAddBookModal);
+  const addBookcase = useLibraryStore((state) => state.addBookcase);
+  const exportLibrary = useLibraryStore((state) => state.exportLibrary);
+  const importLibrary = useLibraryStore((state) => state.importLibrary);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImportClick = () => {

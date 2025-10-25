@@ -1,9 +1,8 @@
-
-import React, { useState, useMemo } from 'react';
+// FIX: Changed React import to `import * as React from 'react'` to correctly resolve types for react-three-fiber JSX elements.
+import * as React from 'react';
 import { useTexture } from '@react-three/drei';
 import type { Book } from '../types';
-import { useLibraryActions } from '../hooks/useLibraryStore';
-import * as THREE from 'three';
+import { useLibraryStore } from '../hooks/useLibraryStore';
 
 interface BookProps {
   book: Book;
@@ -16,28 +15,14 @@ const BOOK_DIMENSIONS = {
   depth: 0.2,
 };
 
-// FIX: Changed to a const with React.FC to fix the 'key' prop type error.
+// A transparent 1x1 pixel PNG as a fallback to prevent crashes
+const FALLBACK_COVER_URL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
 const BookComponent: React.FC<BookProps> = ({ book, position }) => {
-  const [hovered, setHovered] = useState(false);
-  const { selectBook } = useLibraryActions();
+  const [hovered, setHovered] = React.useState(false);
+  const selectBook = useLibraryStore((state) => state.selectBook);
 
-  const texture = useTexture(book.coverUrl);
-
-  const materials = useMemo(() => {
-    const spineMaterial = new THREE.MeshStandardMaterial({ color: '#333333' });
-    const pageMaterial = new THREE.MeshStandardMaterial({ color: '#f0ead6' });
-    const coverMaterial = new THREE.MeshStandardMaterial({ map: texture });
-
-    // order: right, left, top, bottom, front, back
-    return [
-      spineMaterial, // right side (spine)
-      spineMaterial, // left side
-      pageMaterial, // top
-      pageMaterial, // bottom
-      coverMaterial, // front
-      spineMaterial, // back
-    ];
-  }, [texture]);
+  const texture = useTexture(book.coverUrl || FALLBACK_COVER_URL);
   
   const handleClick = (e: any) => {
     e.stopPropagation();
@@ -52,12 +37,18 @@ const BookComponent: React.FC<BookProps> = ({ book, position }) => {
       receiveShadow
       position={position}
       scale={scale}
-      material={materials}
       onClick={handleClick}
       onPointerOver={(e) => { e.stopPropagation(); setHovered(true); }}
       onPointerOut={() => setHovered(false)}
     >
       <boxGeometry args={[BOOK_DIMENSIONS.width, BOOK_DIMENSIONS.height, BOOK_DIMENSIONS.depth]} />
+      {/* Material order: right, left, top, bottom, front, back */}
+      <meshStandardMaterial attach="material-0" color="#333333" /> {/* Right side (spine) */}
+      <meshStandardMaterial attach="material-1" color="#f0ead6" /> {/* Left side (pages) */}
+      <meshStandardMaterial attach="material-2" color="#f0ead6" /> {/* Top side (pages) */}
+      <meshStandardMaterial attach="material-3" color="#f0ead6" /> {/* Bottom side (pages) */}
+      <meshStandardMaterial attach="material-4" map={texture} />   {/* Front side (cover) */}
+      <meshStandardMaterial attach="material-5" color="#333333" /> {/* Back side */}
     </mesh>
   );
 }

@@ -1,13 +1,27 @@
 
-import React from 'react';
+// FIX: Changed React import to `import * as React from 'react'` to correctly resolve types for react-three-fiber JSX elements.
+import * as React from 'react';
 import { OrbitControls, Environment } from '@react-three/drei';
 import { useLibraryStore } from '../hooks/useLibraryStore';
 import Room from './Room';
 import BookcaseComponent from './Bookcase';
+import type { Book } from '../types';
 
 export default function Scene() {
   const bookcases = useLibraryStore((state) => state.bookcases);
   const books = useLibraryStore((state) => state.books);
+
+  const booksByBookcase = React.useMemo(() => {
+    const map = new Map<string, Book[]>();
+    books.forEach(book => {
+      const { bookcaseId } = book.position;
+      if (!map.has(bookcaseId)) {
+        map.set(bookcaseId, []);
+      }
+      map.get(bookcaseId)!.push(book);
+    });
+    return map;
+  }, [books]);
 
   return (
     <>
@@ -35,7 +49,7 @@ export default function Scene() {
         <BookcaseComponent
           key={bookcase.id}
           bookcase={bookcase}
-          books={books.filter((book) => book.position.bookcaseId === bookcase.id)}
+          books={booksByBookcase.get(bookcase.id) || []}
         />
       ))}
     </>

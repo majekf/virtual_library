@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useLibraryStore, useLibraryActions } from '../../hooks/useLibraryStore';
+import { useLibraryStore } from '../../hooks/useLibraryStore';
 import { BookOpenIcon, MoveIcon, TrashIcon, XIcon, SparklesIcon } from './Icons';
 import Spinner from './Spinner';
 
@@ -12,7 +12,11 @@ export default function BookDetailPanel() {
     isLoadingCover: state.isLoadingCover
   }));
   
-  const { toggleBookDetail, toggleBookView, deleteBook, setMovingBookId, generateCoverForBook } = useLibraryActions();
+  const toggleBookDetail = useLibraryStore((state) => state.toggleBookDetail);
+  const toggleBookView = useLibraryStore((state) => state.toggleBookView);
+  const deleteBook = useLibraryStore((state) => state.deleteBook);
+  const setMovingBookId = useLibraryStore((state) => state.setMovingBookId);
+  const generateCoverForBook = useLibraryStore((state) => state.generateCoverForBook);
 
   const book = books.find((b) => b.id === selectedBookId);
 

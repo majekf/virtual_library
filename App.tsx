@@ -8,17 +8,13 @@ import HUD from './components/ui/HUD';
 import AddBookModal from './components/ui/AddBookModal';
 import BookDetailPanel from './components/ui/BookDetailPanel';
 import BookView from './components/ui/BookView';
-// FIX: Import `useLibraryActions` to correctly access store actions.
-import { useLibraryStore, useLibraryActions } from './hooks/useLibraryStore';
+import { useLibraryStore } from './hooks/useLibraryStore';
 
 export default function App() {
-  // FIX: `loadLibrary` is an action and must be retrieved via `useLibraryActions`, not from the main store state.
-  const {
-    isAddBookModalOpen,
-    isBookDetailOpen,
-    isBookViewOpen,
-  } = useLibraryStore();
-  const { loadLibrary } = useLibraryActions();
+  const isAddBookModalOpen = useLibraryStore((state) => state.isAddBookModalOpen);
+  const isBookDetailOpen = useLibraryStore((state) => state.isBookDetailOpen);
+  const isBookViewOpen = useLibraryStore((state) => state.isBookViewOpen);
+  const loadLibrary = useLibraryStore((state) => state.loadLibrary);
 
   useEffect(() => {
     loadLibrary();

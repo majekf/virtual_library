@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useLibraryStore, useLibraryActions } from '../../hooks/useLibraryStore';
+import { useLibraryStore } from '../../hooks/useLibraryStore';
 import { XIcon } from './Icons';
 
 export default function BookView() {
@@ -8,7 +8,7 @@ export default function BookView() {
     selectedBookId: state.selectedBookId,
     books: state.books,
   }));
-  const { toggleBookView } = useLibraryActions();
+  const toggleBookView = useLibraryStore((state) => state.toggleBookView);
 
   const book = books.find((b) => b.id === selectedBookId);
 

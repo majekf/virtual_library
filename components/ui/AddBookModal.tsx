@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { useLibraryStore, useLibraryActions } from '../../hooks/useLibraryStore';
+import { useLibraryStore } from '../../hooks/useLibraryStore';
 import { XIcon } from './Icons';
 import Spinner from './Spinner';
 
 export default function AddBookModal() {
-  const { toggleAddBookModal } = useLibraryActions();
-  const { addBook } = useLibraryActions();
+  const toggleAddBookModal = useLibraryStore((state) => state.toggleAddBookModal);
+  const addBook = useLibraryStore((state) => state.addBook);
   const isLoadingCover = useLibraryStore(state => state.isLoadingCover);
   
   const [title, setTitle] = useState('');

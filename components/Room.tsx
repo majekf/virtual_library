@@ -1,5 +1,6 @@
 
-import React from 'react';
+// FIX: Changed React import to `import * as React from 'react'` to correctly resolve types for react-three-fiber JSX elements.
+import * as React from 'react';
 import { Box } from '@react-three/drei';
 
 export default function Room() {

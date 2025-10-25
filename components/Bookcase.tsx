@@ -1,10 +1,9 @@
-
-import React from 'react';
+// FIX: Changed React import to `import * as React from 'react'` to correctly resolve types for react-three-fiber JSX elements.
+import * as React from 'react';
 import { Box } from '@react-three/drei';
 import type { Book, Bookcase } from '../types';
 import BookComponent from './Book';
-// FIX: Import useLibraryStore to fix 'Cannot find name' error.
-import { useLibraryStore, useLibraryActions } from '../hooks/useLibraryStore';
+import { useLibraryStore } from '../hooks/useLibraryStore';
 
 interface BookcaseProps {
   bookcase: Bookcase;
@@ -17,8 +16,7 @@ const BOOKCASE_DEPTH = 0.3;
 const WOOD_COLOR = '#6F4E37';
 
 const Slot: React.FC<{ position: [number, number, number]; bookcaseId: string; shelfIndex: number; slotIndex: number; isMoving: boolean;}> = ({ position, bookcaseId, shelfIndex, slotIndex, isMoving }) => {
-    // FIX: `movingBookId` is part of the state, not actions. It must be retrieved from `useLibraryStore`, while actions are retrieved from `useLibraryActions`.
-    const { updateBookPosition } = useLibraryActions();
+    const updateBookPosition = useLibraryStore((state) => state.updateBookPosition);
     const movingBookId = useLibraryStore((state) => state.movingBookId);
 
     const handleMoveClick = () => {
@@ -36,9 +34,8 @@ const Slot: React.FC<{ position: [number, number, number]; bookcaseId: string; s
     );
 };
 
-// FIX: Changed to a const with React.FC to fix the 'key' prop type error in Scene.tsx.
 const BookcaseComponent: React.FC<BookcaseProps> = ({ bookcase, books }) => {
-  const { movingBookId } = useLibraryStore((state) => ({ movingBookId: state.movingBookId }));
+  const movingBookId = useLibraryStore((state) => state.movingBookId);
   const isMoving = !!movingBookId;
 
   const shelfHeight = (BOOKCASE_HEIGHT - 0.2) / bookcase.shelves;
@@ -49,7 +46,7 @@ const BookcaseComponent: React.FC<BookcaseProps> = ({ bookcase, books }) => {
       <Box args={[BOOKCASE_WIDTH, BOOKCASE_HEIGHT, BOOKCASE_DEPTH]} castShadow>
         <meshStandardMaterial color={WOOD_COLOR} />
       </Box>
-      <Box args={[BOOKCASE_WIDTH - 0.1, BOOKCASE_HEIGHT - 0.1, BOOKCASE_DEPTH - 0.05]} position={[0, 0, 0.025]}>
+      <Box args={[BOOKCASE_WIDTH - 0.1, BOOKCASE_HEIGHT - 0.1, BOOKCASE_DEPTH - 0.05]} position={[0, 0, -0.025]}>
         <meshStandardMaterial color="#fdf5e6" />
       </Box>
 
@@ -89,8 +86,6 @@ const BookcaseComponent: React.FC<BookcaseProps> = ({ bookcase, books }) => {
   );
 }
 
-export default BookcaseComponent;
-
 // Memoize to prevent re-renders when other parts of the scene change
 const MemoizedBookcase = React.memo(BookcaseComponent);
-export { MemoizedBookcase as Bookcase };
+export default MemoizedBookcase;
